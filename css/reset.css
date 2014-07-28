@@ -1,0 +1,24 @@
+/**
+ *@descirption 重置浏览器默认样式的css
+ *@author 罗明忠
+ *@date   2014-6-18
+*/
+body, h1, h2, h3, h4, h5, h6, p, form,main {
+    margin: 0;
+}
+
+ol, ul {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/*下面的css样式是为了解决在ios中按钮的原生样式*/
+* {
+    -webkit-appearance:none;
+    outline: none;
+    font-family:'微软雅黑' 'Microsoft YaHei' \5FAE\8F6F\96C5\9ED1;
+}

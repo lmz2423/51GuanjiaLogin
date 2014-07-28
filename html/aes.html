@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title></title>
+</head>
+<body>
+
+</body>
+<script src="../js/aes.js">
+
+</script>
+<script type="text/javascript">
+    (function () {
+        var test = new AES.Crypto('4BB97A76D2496F80');//已My Password为密钥建立一个新的AES.Crypto对象.
+        var mimawen = test.encrypt('luomingzhong');
+        document.writeln(test.encrypt('123')+'<br>');
+        console.log(test.encrypt('123')) ;//返回一个16进制字符串,为使用相应密钥加密字符串123的结果
+        console.log(test.decrypt(mimawen)); //返回使用密钥解密相应密文后的明文信息
+    }());
+</script>
+</html>

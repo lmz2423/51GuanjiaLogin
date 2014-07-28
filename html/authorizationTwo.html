@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta content="telephone=no" name="format-detection"/>
+    <meta name="viewport" content="width=device-width initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>授权绑定二</title>
+    <link rel="stylesheet" href="../css/reset.css"/>
+    <link rel="stylesheet" href="../css/main.css"/>
+    <style>
+        #pwd {
+            margin-bottom: 20px;
+        }
+
+        #megCode {
+            width: 32%;
+            margin-right: 8px;
+            float: left;
+        }
+
+        .yanzhenma {
+            line-height: 50px;
+            font-size: 1.6rem;
+        }
+
+        .agreenment {
+            display: block;
+            float: none;
+            clear: both;
+            line-height: 37px;
+            margin-left: 33px;
+        }
+
+        .agreeProtcol {
+            -webkit-appearance: normal;
+            margin-top: 6px;
+            position: absolute;
+            left: 10px;
+
+            /*background: red;*/
+            border-radius: 25px;
+            width: 25px;
+            height: 25px;
+            background: url("../image/nocchecked.png");
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            background-size: cover;
+
+        }
+
+        .agreeProtcol:checked {
+            background-image: url("../image/checked.png");
+        }
+    </style>
+</head>
+<body>
+<div class="main">
+    <nav>
+        <p class="navTitle">授权绑定</p>
+    </nav>
+    <div class="content">
+        <span class="tipsOne">账号：18000463664</span>
+
+    </div>
+    <form method="post" action="register.html" class="formBlock">
+        <input type="text" class="inputText" placeholder="密码（6-16位字符）" id="pwd" autocorrect="off" autocapitalize="off">
+        <input type="text" class="inputText" placeholder="短信验证码" id="megCode" autocorrect="off" autocapitalize="off"><span class="yanzhenma">获取验证码</span>
+
+        <p class="agreenment">
+            <input type="checkbox" class="agreeProtcol" autocorrect="off" autocapitalize="off"><span>我已同意<a href="agreementExplain.html">注册协议</a></span>
+        </p>
+        <span class="errorText"></span>
+        <input type="submit" value="确定">
+    </form>
+    <p class="loginTrips">宜人贷出借老用户，请<a href="login.html">登录</a></p>
+</div>
+</body>
+</html>
