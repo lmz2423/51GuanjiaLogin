@@ -66,13 +66,16 @@ span.errorText{
 input[type="submit"]{
     display: block;
     margin: 3px 2%;
-    background: #c1c1c1;
+    background: #d72839;
     color:#ffffff;
     height: 42px;
     width: 96%;
     border: 0px;
     font-size: 2.2rem;
     border-radius: 0px;
+}
+input[type="submit"]:disabled{
+    background: #c1c1c1;
 }
 
 /*font-size*/
