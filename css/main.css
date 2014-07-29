@@ -44,7 +44,15 @@ input.inputText{
     height:50px;
     border: 1px solid #cccccc;
     padding-left: 2.6%;
+    border-radius: 0px;
 }
+input.inputText:nth-child(2){
+    border-top: 0px;
+}
+input.inputText:nth-child(3){
+    border-top:0px;
+}
+
 span.errorText{
     display: block;
     margin: 15px 5.4% 7px 5.4%;
@@ -58,9 +66,10 @@ input[type="submit"]{
     background: #c1c1c1;
     color: #ffffff;
     height: 42px;
-    width: 94%;
+    width: 96%;
     border: 0px;
     font-size: 2.2rem;
+    border-radius: 0px;
 }
 /*font-size*/
 span.tipsOne,span.tipsTwo, input.inputText,.loginTrips,.agreenment{
