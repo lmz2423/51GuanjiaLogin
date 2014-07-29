@@ -22,7 +22,6 @@ p.navTitle{
 span.tipsOne,span.tipsTwo{
     display: block;
     padding: 13px 5% 0px 5%;
-
 }
 span.tipsOne,.agreenment, .agreenment a{
     color:#919aa7;
@@ -46,11 +45,15 @@ input.inputText{
     padding-left: 2.6%;
     border-radius: 0px;
 }
+
 input.inputText:nth-child(2){
     border-top: 0px;
 }
 input.inputText:nth-child(3){
     border-top:0px;
+}
+input.inputText:focus{
+    border: 1px solid #0066cc;
 }
 
 span.errorText{
@@ -64,13 +67,14 @@ input[type="submit"]{
     display: block;
     margin: 3px 2%;
     background: #c1c1c1;
-    color: #ffffff;
+    color:#ffffff;
     height: 42px;
     width: 96%;
     border: 0px;
     font-size: 2.2rem;
     border-radius: 0px;
 }
+
 /*font-size*/
 span.tipsOne,span.tipsTwo, input.inputText,.loginTrips,.agreenment{
     font-size: 1.6rem;
