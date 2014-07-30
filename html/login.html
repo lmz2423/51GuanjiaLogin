@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../css/main.css"/>
 </head>
 <body>
-<div class="main">
+<div class="main" data-key="1231456456455">
     <nav>
         <p class="navTitle">授权绑定</p>
     </nav>
@@ -23,8 +23,10 @@
         <input type="submit" value="完成" disabled>
     </form>
 </div>
-<script type="text/javascript" src="../js/zepto.js">
-</script>
+<script type="text/javascript" src="../js/zepto.js"></script>
+<script src="../js/tripledes.js"></script>
+<script src="../js/md5.js"></script>
+<script src="../js/mode-ecb.js"></script>
 <script>
     var elementObject = {};
     elementObject.key = document.querySelector('.main').getAttribute('data-key');
@@ -58,19 +60,19 @@
         //验证手机号或邮件
         Login.checkPhoneNumberOrEmail = function (iphone,emailPattern,iphonePattern) {
             var iphoneValue = iphone.value.trim();
-            if ((/^1[3|4|5|8|7][0-9]\d{4,8}$/.test(iphoneValue)) && iphoneValue.length === 11) {
+            if ((iphonePattern.test(iphoneValue)) && iphoneValue.length === 11) {
                 return true;
             }
             else if (iphoneValue.length === 0) {
                 return "empty";
             }
-            else {
-                return false;
+            else if(emailPattern.test(iphoneValue)){
+                return true;
             }
         };
         //检测密码
         Login.checkPwd = function (peopleID) {
-            var peopleIDText = peopleID.value.trim();
+            var peopleIDText = peopleID.value;
             if (peopleIDText.length === 0) {
                 return 'empty'
             }
@@ -87,13 +89,14 @@
             errorArray[1] = new Array();
             e.preventDefault();
             var returnValuePwd = this.checkPwd(elementObject.pwd),
-                returnValueIphoneNumber = this.checkPhoneNumber(elementObject.iphone);
+                returnValueIphoneNumber = this.checkPhoneNumberOrEmail(elementObject.iphone,elementObject.emailPattern,elementObject.reguIphone);
 
 
             //结果正确
             if (returnValuePwd === true &&
                 returnValueIphoneNumber === true) {
                 //传输数据 ajax
+                this.ajaxSend();
             }
 
             //结果错误
@@ -120,7 +123,26 @@
                 this.errorInputFocus(errorArray);
             }
         };
+        //发送数据
+        // todo 二伟添加
+        Login.ajaxSend = function() {
+            $.ajax({
+                url:"test.html",//发送的地址
+                data:{message:this.informationIntegrated(elementObject)},//传输过去的数据
+                dataType:'json',
+                Type:'post',
+                success:function(data){
+                    //data 成功 显示绑定成功
 
+                    //data 失败
+                    alert("例如")
+                },
+                error:function(data){
+                    //网络错误等
+                    alert("网络错误");
+                }
+            });
+        };
         //下一步按钮变红
         Login.submitChecked = function (submitButton) {
             submitButton.disabled = false;
@@ -154,20 +176,40 @@
             errorTextArray[0][0].focus();
         }
 
-        //加密信息 返还json字符串
-        Login.enctype = function () {
-
+        //加密信息 返还密文
+        Login.encrypt = function (message, key) {
+            var keyHex = CryptoJS.enc.Utf8.parse(key);
+            var encrypted = CryptoJS.DES.encrypt(message, keyHex, {
+                mode: CryptoJS.mode.ECB,
+                padding: CryptoJS.pad.Pkcs7
+            });
+            return encrypted.toString();
         };
+
+        //整合信息为json格式的字符串
+
+        Login.informationIntegrated = function(elementObject){
+            var useName = elementObject.iphone.value.trim(),
+                pwd = elementObject.pwd.value,
+                message={};
+            message.userName= this.encrypt(useName,elementObject.key);
+            message.pwd = this.encrypt(pwd,elementObject.key);
+            console.log(JSON.stringify(message));
+            return JSON.stringify(message);
+        }
+
+
+
         //信息是否完整
-        Login.informationComplete = function () {
-            var isComplete = ( (this.checkPhoneNumberOrEmail(elementObject.iphone)===true)
+        Login.informationComplete = function (elementObject) {
+            var isComplete = ( (this.checkPhoneNumberOrEmail(elementObject.iphone,elementObject.emailPattern,elementObject.reguIphone)===true)
                     &&(this.checkPwd(elementObject.pwd)===true));
             return isComplete;
         };
 
-        Login.KeyUpOrBlur = function (event) {
+        Login.KeyUpOrBlur = function (elementObject) {
 
-            if (this.informationComplete()) {
+            if (this.informationComplete(elementObject)) {
                 this.submitChecked(elementObject.submitButton);
             }
             else{
@@ -175,9 +217,18 @@
             }
         };
         //todo 改变密码类型
-        Login.checkPwdType = function(){
-
-        }
+        Login.checkPwdType = function(elementObject){
+            elementObject.pwd.setAttribute("placeholder","");
+            elementObject.pwd.setAttribute("type","password");
+        };
+        //
+        Login.checkPwdTypeText = function(elementObject){
+            var length = elementObject.pwd.value.length;
+            if(length===0){
+                elementObject.pwd.setAttribute("placeholder",'密码');
+                elementObject.pwd.setAttribute("type",'text');
+            }
+        };
 
         return Login;
     }());
@@ -188,12 +239,21 @@
     });
 
     AddEventListener(elementObject.iphone, 'keyup', function (event) {
-        Login.KeyUpOrBlur();
+        Login.KeyUpOrBlur(elementObject);
     });
 
     AddEventListener(elementObject.pwd, 'keyup', function (event) {
-        Login.KeyUpOrBlur();
+        Login.KeyUpOrBlur(elementObject);
     });
+
+    AddEventListener(elementObject.pwd,"focus",function(event){
+        Login.checkPwdType(elementObject);
+    });
+
+    AddEventListener(elementObject.pwd,"blur",function(event){
+        Login.checkPwdTypeText(elementObject);
+    })
+
 </script>
 </body>
 </html>

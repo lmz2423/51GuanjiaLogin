@@ -27,6 +27,9 @@
     <p class="loginTrips">宜人贷出借老用户，请<a href="login.html">登录</a></p>
 </div>
 <script type="text/javascript" src="../js/zepto.js"></script>
+<script src="../js/tripledes.js"></script>
+<script src="../js/md5.js"></script>
+<script src="../js/mode-ecb.js"></script>
 <script type="text/javascript">
     /**
      * Created by luomingzhong on 2014/7/29.
@@ -121,6 +124,7 @@
                     returnValueName === true &&
                     returnValueIphoneNumber === true) {
                 //传输数据 ajax
+                this.ajaxSend();
             }
 
             //结果错误
@@ -163,7 +167,32 @@
 
         Login.submitChangeGay = function (submitButton) {
             submitButton.disabled = true;
-        }
+        };
+
+        // todo 二伟添加
+        Login.ajaxSend = function() {
+            $.ajax({
+                url:"test.html",//发送的地址
+                data:{message:this.informationIntegrated(elementObject)},//传输过去的数据
+                dataType:'json',
+                Type:'post',
+                success:function(data){
+                    //data 成功 显示绑定成功
+                    if(data.status===200){
+                        //转下个页面
+                        window.location.href = "authorizationTwo.html";
+                    }
+                    //信息错误失败
+                    if(data.status==="xxx"){
+                        alert("例如");
+                    }
+                },
+                error:function(data){
+                    //网络错误等
+                    alert("网络错误");
+                }
+            });
+        };
 
         //显示错误信息
         Login.showErrorAndFocus = function (errorTextArray) {
@@ -187,10 +216,29 @@
             errorTextArray[0][0].focus();
         }
 
-        //加密信息 返还json字符串
-        Login.enctype = function () {
 
+        //加密信息 返还密文
+        Login.encrypt = function (message, key) {
+            var keyHex = CryptoJS.enc.Utf8.parse(key);
+            var encrypted = CryptoJS.DES.encrypt(message, keyHex, {
+                mode: CryptoJS.mode.ECB,
+                padding: CryptoJS.pad.Pkcs7
+            });
+            return encrypted.toString();
         };
+
+        //整合信息为json格式的字符串
+        Login.informationIntegrated = function(elementObject){
+            var useName = elementObject.name.value.trim(),
+                peopleId = elementObject.peopleID.value.trim(),
+                iphoneNumber = elementObject.iphone.value.trim(),
+               message={};
+            message.userName= this.encrypt(useName,elementObject.key);
+            message.peopleId = this.encrypt(peopleId,elementObject.key);
+            message.iphoneNumber = this.encrypt(iphoneNumber,elementObject.key);
+            return JSON.stringify(message);
+        }
+
         //信息是否完整
         Login.informationComplete = function () {
             var isComplete = (this.checkChineseName(elementObject.name)===true) &&
@@ -211,7 +259,6 @@
         };
         return Login;
 
-        // 按enter
     }());
 
     //监听submit事件
