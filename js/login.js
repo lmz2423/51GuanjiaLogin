@@ -3,26 +3,24 @@
  */
 var elementObject = {};
 elementObject.key = document.querySelector('.main').getAttribute('data-key');
-elementObject.iphone = document.querySelector('#iphoneNumber');//电话
-elementObject.peopleID = document.querySelector('#PeopleID');//身份证
-elementObject.name = document.querySelector('#peopleName');//姓名
-elementObject.regu = /^[a-zA-Z\u4e00-\u9fa5]+$/;//校验姓名 包含中文和英文
-elementObject.regID = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;//校验身份证，是简单的校验
+elementObject.pwd = document.querySelector('#pwd');//密码
+elementObject.msCode = document.querySelector('#megCode');//验证
 elementObject.submitButton = document.querySelector("input[type='submit']");
+elementObject.checkButton = document.querySelector("input[type ='checkbox']");
 elementObject.errorText = $('.errorText');//错误信息提示
 elementObject.form = document.querySelector(".formBlock");//表格
+elementObject.checekCodeButton = document.querySelector(".yanzhenma");//验证按钮
 var errorTextConfig = {
-    iphone: {
-        empty: "手机号码不能为空！",
-        errorRule: "手机号码不符合规则！"
+    msCode: {
+        empty: "短信验证码不能为空！",
+        errorRule: "短信验证码不符合规则"
     },
-    ID: {
-        empty: "身份证号码不能为空！",
-        errorRule: "身份证号码不符合规则！"
+    pwd: {
+        empty: "密码不能为空",
+        errorRule: "密码长度不符合规则！"
     },
-    name: {
-        empty: "姓名不能为空",
-        errorRule: "请输入中文或英文！"
+    checkbox:{
+        errorRule:"未选择同意协议！"
     }
 };
 var AddEventListener = function (element, eventype, callfunc) {
@@ -35,13 +33,15 @@ var AddEventListener = function (element, eventype, callfunc) {
 };
 var Login = (function () {
     var Login = {};
-    //验证手机号
-    Login.checkPhoneNumber = function (iphone) {
-        var iphoneValue = iphone.value.trim();
-        if ((/^1[3|4|5|8|7][0-9]\d{4,8}$/.test(iphoneValue)) && iphoneValue.length === 11) {
+
+    var timeOut =60;
+    //验证密码
+    Login.checkPwd = function (pwd) {
+        var pwdValue = pwd.value;
+        if (pwdValue.length>=6&&pwdValue.length<=16) {
             return true;
         }
-        else if (iphoneValue.length === 0) {
+        else if (pwdValue.length === 0) {
             return "empty";
         }
         else {
@@ -49,29 +49,29 @@ var Login = (function () {
         }
     };
 
-    //检测姓名
-    Login.checkChineseName = function (name) {
-        var nameText = name.value.trim();
-        if (nameText.length === 0) {
+    //检测短信验证码
+    Login.checkMessage = function (msCode) {
+        var msCodeValue = msCode.value.trim();
+        if (msCodeValue.length === 0) {
             return "empty";
         }
-        else if (elementObject.regu.test(nameText)) {
+        else {
             return true;
         }
         return false;
     };
 
-    //检测身份证
-    Login.checkID = function (peopleID) {
-        var peopleIDText = peopleID.value.trim();
-        if (peopleIDText.length === 0) {
-            return 'empty'
-        }
-        else if (elementObject.regID.test(peopleIDText)) {
+    //检测是否同意协议
+    Login.checkProtcol = function (checkObject){
+        var ischecked = checkObject.checked;
+        if(ischecked){
             return true;
         }
-        return false;
-    };
+        else{
+            return false;
+        }
+
+    }
 
     //submit 提交动作
     Login.submit = function (e) {
@@ -81,43 +81,40 @@ var Login = (function () {
 
 
         e.preventDefault();
-        var returnValueName = this.checkChineseName(elementObject.name),
-            returnValueID = this.checkID(elementObject.peopleID),
-            returnValueIphoneNumber = this.checkPhoneNumber(elementObject.iphone);
+        var returnValuePwd = this.checkPwd(elementObject.pwd),
+            returnValueMsCode = this.checkMessage(elementObject.msCode),
+            returnValueCheckBox = this.checkProtcol(elementObject.checkButton);
 
 
         //结果正确
-        if (returnValueID === true &&
-            returnValueName === true &&
-            returnValueIphoneNumber === true) {
+        if (returnValuePwd === true &&
+            returnValueMsCode === true &&
+            returnValueCheckBox === true) {
             //传输数据 ajax
+            this.ajaxSend();
         }
 
         //结果错误
         else {
-            if (returnValueName === false) {
-                errorArray[0].push(elementObject.name);
-                errorArray[1].push(errorTextConfig.name.errorRule);
+            if (returnValuePwd === false) {
+                errorArray[0].push(elementObject.pwd);
+                errorArray[1].push(errorTextConfig.pwd.errorRule);
             }
-            if (returnValueName === "empty") {
-                errorArray[0].push(elementObject.name);
-                errorArray[1].push(errorTextConfig.name.empty);
+            if (returnValuePwd === "empty") {
+                errorArray[0].push(elementObject.pwd);
+                errorArray[1].push(errorTextConfig.pwd.empty);
             }
-            if (returnValueID === false) {
-                errorArray[0].push(elementObject.peopleID);
-                errorArray[1].push(errorTextConfig.ID.errorRule);
+            if (returnValueMsCode === false) {
+                errorArray[0].push(elementObject.msCode);
+                errorArray[1].push(errorTextConfig.msCode.errorRule);
             }
-            if (returnValueID === "empty") {
-                errorArray[0].push(elementObject.peopleID);
-                errorArray[1].push(errorTextConfig.ID.empty);
+            if (returnValueMsCode === "empty") {
+                errorArray[0].push(elementObject.msCode);
+                errorArray[1].push(errorTextConfig.msCode.empty);
             }
-            if (returnValueIphoneNumber === false) {
-                errorArray[0].push(elementObject.iphone);
-                errorArray[1].push(errorTextConfig.iphone.errorRule);
-            }
-            if (returnValueIphoneNumber === "empty") {
-                errorArray[0].push(elementObject.iphone);
-                errorArray[1].push(errorTextConfig.iphone.empty);
+            if (returnValueCheckBox === false) {
+                errorArray[0].push(elementObject.checekCodeButton);
+                errorArray[1].push(errorTextConfig.checkbox.errorRule);
             }
             this.showErrorAndFocus(errorArray);
             this.errorInputFocus(errorArray);
@@ -133,7 +130,31 @@ var Login = (function () {
 
     Login.submitChangeGay = function (submitButton) {
         submitButton.disabled = true;
-    }
+    };
+
+    // todo 二伟添加
+    Login.ajaxSend = function() {
+        $.ajax({
+            url:"test.html",//发送的地址
+            data:{message:this.informationIntegrated(elementObject)},//传输过去的数据
+            dataType:'json',
+            Type:'post',
+            success:function(data){
+                //data 成功 显示绑定成功
+                if(data.status===200){
+
+                }
+                //信息错误失败
+                if(data.status==="xxx"){
+                    alert("例如");
+                }
+            },
+            error:function(data){
+                //网络错误等
+                alert("网络错误");
+            }
+        });
+    };
 
     //显示错误信息
     Login.showErrorAndFocus = function (errorTextArray) {
@@ -146,6 +167,16 @@ var Login = (function () {
         elementObject.errorText.text(errorTexts);
     };
 
+    //验证码点击效果
+    Login.touchStart = function(elementObject){
+        elementObject.classList.add("yanzhenmaTouch");
+    };
+
+    //离开验证码效果
+    Login.touchEnd = function(elementObject){
+        elementObject.classList.remove("yanzhenmaTouch");
+    }
+
     //错误的输入框聚焦
     Login.errorInputFocus = function (errorTextArray) {
         var i = 0,
@@ -157,27 +188,108 @@ var Login = (function () {
         errorTextArray[0][0].focus();
     }
 
-    //加密信息 返还json字符串
-    Login.enctype = function () {
 
+    //加密信息 返还密文
+    Login.encrypt = function (message, key) {
+        var keyHex = CryptoJS.enc.Utf8.parse(key);
+        var encrypted = CryptoJS.DES.encrypt(message, keyHex, {
+            mode: CryptoJS.mode.ECB,
+            padding: CryptoJS.pad.Pkcs7
+        });
+        return encrypted.toString();
     };
+
+    //整合信息为json格式的字符串
+    Login.informationIntegrated = function(elementObject){
+        var usePwd = elementObject.pwd.value,
+            msCode = elementObject.msCode.value.trim(),
+            message={};
+
+        message.usePwd= this.encrypt(usePwd,elementObject.key);
+        message.msCode = this.encrypt(msCode,elementObject.key);
+
+        return JSON.stringify(message);
+    }
+
     //信息是否完整
-    Login.informationComplete = function () {
-        var isComplete = (this.checkChineseName(elementObject.name)===true) &&
-            (this.checkID(elementObject.peopleID)===true) &&
-            (this.checkPhoneNumber(elementObject.iphone)===true);
+    Login.informationComplete = function (elementObject) {
+        var isComplete = (this.checkPwd(elementObject.pwd)===true) &&
+            (this.checkMessage(elementObject.msCode)===true) &&
+            (this.checkProtcol(elementObject.checkButton)===true);
         return isComplete;
+    };
+
+    //获取验证码
+
+    Login.getCode = function(){
+        $.ajax({
+            url:"test.html",
+            data:{xi:""},
+            dataType:"json",
+            type:'post',
+            success:function(){
+
+            },
+            error:function(){
+                alert("信息错误");
+            }
+        });
+    }
+
+    //是否能够发送验证码
+    Login.isCanClick = function(){
+        if(timeOut===60){
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+
+
+    Login.showClearTime= function(){
+        var time = setInterval(function () {
+            elementObject.checekCodeButton.innerText =timeOut -1 + "s后重发";
+            timeOut = timeOut - 1;
+            if (timeOut < 0) {
+                timeOut =60;
+                clearInterval(time);
+                elementObject.checekCodeButton.innerText = "重新发送验证码";
+            }
+        }, 1000);
+    };
+
+    //点击获取验证码的效果
+    Login.click = function(){
+        if(this.isCanClick()){
+            this.getCode();
+            this.showClearTime();
+        }
     };
 
     Login.KeyUpOrBlur = function (event) {
 
-        if (this.informationComplete()) {
+        if (this.informationComplete(elementObject)) {
             this.submitChecked(elementObject.submitButton);
         }
         else{
             this.submitChangeGay(elementObject.submitButton);
         }
 
+    };
+
+    //改变密码类型
+    Login.checkPwdType = function(elementObject){
+        elementObject.pwd.setAttribute("placeholder","");
+        elementObject.pwd.setAttribute("type","password");
+    };
+    //
+    Login.checkPwdTypeText = function(elementObject){
+        var length = elementObject.pwd.value.length;
+        if(length===0){
+            elementObject.pwd.setAttribute("placeholder",'密码（6-16位字符）');
+            elementObject.pwd.setAttribute("type",'text');
+        }
     };
     return Login;
 
@@ -189,14 +301,33 @@ AddEventListener(elementObject.form, 'submit', function (event) {
     Login.submit(event);
 });
 
-AddEventListener(elementObject.iphone, 'keyup', function (event) {
+AddEventListener(elementObject.pwd, 'keyup', function (event) {
     Login.KeyUpOrBlur();
 });
 
-AddEventListener(elementObject.name, 'keyup', function (event) {
+AddEventListener(elementObject.msCode, 'keyup', function (event) {
     Login.KeyUpOrBlur();
 });
 
-AddEventListener(elementObject.peopleID, 'keyup', function (event) {
+AddEventListener(elementObject.checkButton, 'click', function (event) {
     Login.KeyUpOrBlur();
+});
+
+AddEventListener(elementObject.pwd,"focus",function(event){
+    Login.checkPwdType(elementObject);
+});
+
+AddEventListener(elementObject.pwd,"blur",function(event){
+    Login.checkPwdTypeText(elementObject);
+})
+
+AddEventListener(elementObject.checekCodeButton,'touchstart',function(event){
+    Login.touchStart(elementObject.checekCodeButton);
+});
+AddEventListener(elementObject.checekCodeButton,'touchend',function(){
+    Login.touchEnd(elementObject.checekCodeButton);
+});
+
+AddEventListener(elementObject.checekCodeButton,'click',function(){
+    Login.click();
 });

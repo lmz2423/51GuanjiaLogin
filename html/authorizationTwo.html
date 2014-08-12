@@ -3,6 +3,7 @@
 <head lang="en">
     <meta charset="UTF-8">
     <meta content="telephone=no" name="format-detection"/>
+    <meta name=”apple-mobile-web-app-status-bar-style” content=black” />
     <meta name="viewport" content="width=device-width initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>授权绑定二</title>
     <link rel="stylesheet" href="../css/reset.css"/>
@@ -247,8 +248,8 @@ var Login = (function () {
     //显示错误信息
     Login.showErrorAndFocus = function (errorTextArray) {
         var i = 0,
-                length = errorTextArray[0].length,
-                errorTexts = "";
+            length = errorTextArray[0].length,
+            errorTexts = "";
         for (i; i < length; i += 1) {
             errorTexts += errorTextArray[1][i];
         }
@@ -257,7 +258,7 @@ var Login = (function () {
 
     //验证码点击效果
     Login.touchStart = function(elementObject){
-         elementObject.classList.add("yanzhenmaTouch");
+        elementObject.classList.add("yanzhenmaTouch");
     };
 
     //离开验证码效果
@@ -290,8 +291,8 @@ var Login = (function () {
     //整合信息为json格式的字符串
     Login.informationIntegrated = function(elementObject){
         var usePwd = elementObject.pwd.value,
-            msCode = elementObject.msCode.value.trim(),
-            message={};
+                msCode = elementObject.msCode.value.trim(),
+                message={};
 
         message.usePwd= this.encrypt(usePwd,elementObject.key);
         message.msCode = this.encrypt(msCode,elementObject.key);
@@ -342,7 +343,7 @@ var Login = (function () {
             if (timeOut < 0) {
                 timeOut =60;
                 clearInterval(time);
-                elementObject.text("重新发送验证码");
+                elementObject.checekCodeButton.innerText = "重新发送验证码";
             }
         }, 1000);
     };
@@ -419,7 +420,6 @@ AddEventListener(elementObject.checekCodeButton,'touchend',function(){
 AddEventListener(elementObject.checekCodeButton,'click',function(){
     Login.click();
 });
-
 </script>
 </body>
 </html>
